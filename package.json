@@ -2,7 +2,7 @@
   "name": "moravio-be-coins",
   "version": "1.0.0",
   "description": "Moravio - backend task - coins. https://hackmd.io/3MSmOwe3RV6Zoyzd4JUyOQ",
-  "main": "src/return-change.ts",
+  "main": "src/get-change.ts",
   "scripts": {
     "test": "npx jest",
     "test-watch": "npx jest --watch"
