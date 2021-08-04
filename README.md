@@ -18,7 +18,7 @@ getChange(12, [1, 2, 5]); // [5, 5, 2]
 
 ## CI / CD with GitHub Actions
 Tests are run after every push on any branch.
+
 The package is auto-published on npm after each GitHub release.
 
 ## Thank you 🙂
-Hello world
