@@ -21,3 +21,4 @@ Tests are run after every push on any branch.
 The package is auto-published on npm after each GitHub release.
 
 ## Thank you 🙂
+Hello world
