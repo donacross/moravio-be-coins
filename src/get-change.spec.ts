@@ -4,7 +4,7 @@ import { getChange } from "./get-change";
 describe('getChange()', () => {
 
     test('demo case', () => {
-        expect(getChange(12, [1, 2, 5])).toStrictEqual([5, 5, 2]);
+        expect(getChange(12, [1, 2, 5])).toStrictEqual([5, 5, 2, 4]);
     });
 
     test('duplicate and unsorted coins', () => {
