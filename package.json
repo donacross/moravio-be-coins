@@ -1,0 +1,32 @@
+{
+  "name": "moravio-be-coins",
+  "version": "1.0.0",
+  "description": "Moravio - backend task - coins. https://hackmd.io/3MSmOwe3RV6Zoyzd4JUyOQ",
+  "main": "src/return-change.ts",
+  "scripts": {
+    "test": "npx jest",
+    "test-watch": "npx jest --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/donacross/moravio-be-coins.git"
+  },
+  "author": "Donatien Lacroix",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/donacross/moravio-be-coins/issues"
+  },
+  "homepage": "https://github.com/donacross/moravio-be-coins#readme",
+  "engines": {
+    "node": "14.16.1",
+    "npm": "6.14.10"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.14.8",
+    "@babel/preset-env": "^7.14.9",
+    "@babel/preset-typescript": "^7.14.5",
+    "@types/jest": "^26.0.24",
+    "babel-jest": "^27.0.6",
+    "jest": "^27.0.6"
+  }
+}
