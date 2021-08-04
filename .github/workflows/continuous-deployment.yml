@@ -25,6 +25,5 @@ jobs:
           node-version: 14
           registry-url: https://registry.npmjs.org
       - run: npm publish --access public
-        working-directory: moravio-be-coins
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}}
