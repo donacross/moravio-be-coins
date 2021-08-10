@@ -1,6 +1,6 @@
 {
   "name": "moravio-be-coins",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Moravio - backend task - coins. https://hackmd.io/3MSmOwe3RV6Zoyzd4JUyOQ",
   "main": "src/get-change.ts",
   "scripts": {
