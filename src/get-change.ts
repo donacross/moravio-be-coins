@@ -1,75 +1,94 @@
-import { parseMoney } from "./money";
-import { sortDescendingUnique } from "./util";
+import { isNotInteger } from "./util/is";
+import { MAX_DECIMAL_CURRENCY } from "./util/money";
+import { countDecimals } from "./util/number";
 
 /**
  * Calculate the change of a given amount with the smallest amount of coin possible.
  *
- * Doesn't throw an error in case the change couldn't be calculated.
- * @see {getChangeOrThrow}
+ * @param total Total amount to return. Must be a positive number.
+ * @param coins All possible coin values, unique and sorted from smallest to largest.
  *
- * @param total Total amount to return.
- * @param coins All possible coin values. Possibly unsorted and containing duplicates.
+ * @returns The change or -1 if it can't be calculated.
  */
-export function getChange(total: number, coins: number[]): GetChangeResult {
+export function getChange(total: number, coins: number[]): number[] | -1 {
 
-    const change: number[] = [];
+    const decimals = coins.reduce(
+        (max, coin) => Math.max(max, countDecimals(coin)),
+        countDecimals(total),
+    );
 
-    let left = Math.abs(total);
-
-    const coinsSorted = sortDescendingUnique(coins).filter(coin => coin !== 0);
-
-    let success = coinsSorted.length > 0 || total === 0;
-
-    for (let i = 0; i < coinsSorted.length; i++) {
-
-        const coin = coinsSorted[i];
-
-        const quotient = Math.trunc(parseMoney(left / coin));
-
-        left = parseMoney(left - parseMoney(quotient * coin));
-
-        for (let j = 1; j <= quotient; j++) {
-            change.push(coin);
-        }
-
-        success = left === 0;
-
-        if (success) {
-            break;
-        }
+    if (decimals === 0) {
+        return _getChangeInt(total, coins);
     }
 
-    return {
-        success,
-        change,
-        left,
-    };
-}
+    if (decimals > MAX_DECIMAL_CURRENCY) {
+        throw new Error(
+            `Only ${MAX_DECIMAL_CURRENCY} decimals supported. Got ${decimals}\n` +
+            `total="${total}\n"` +
+            `coins="${coins}"`
+        );
+    }
 
-export type GetChangeResult = {
-    /** Whether the change has been successfully possible.  */
-    success: boolean,
-    /** Coins values returned, ordered from biggest to smallest. */
-    change: number[],
-    /** Amount possibly not covered by the change, in case of a failure. */
-    left: number,
-};
+    const totalInt = total * 10 ** decimals;
+    const coinsInt = coins.map(coin => coin * 10 ** decimals);
+
+    const result = _getChangeInt(totalInt, coinsInt);
+
+    return result === -1 ? -1 : result.map(coin => coin / (10 ** decimals));
+}
 
 /**
- * Returns the change of a given amount with the smallest amount of coin possible.
+ * Calculate the change of a given amount with the smallest amount of coin possible.
  *
- * @throws An error in case the change couldn't be calculated.
+ * @param total Total amount to return. Must be a positive integer or 0
+ * @param coins All possible coin values, unique and sorted from smallest to largest.
  *
- * @param total Total amount to return.
- * @param coins All possible coin values. Possibly unsorted and containing duplicates.
+ * @returns The change or -1 if it can't be calculated.
+ *
+ * @copyright Inspiration
+ * - [GeeksforGeeks](https://www.geeksforgeeks.org/find-minimum-number-of-coins-that-make-a-change/)
+ * - [YouTube](https://youtu.be/jgiZlGzXMBw)
  */
-export function getChangeOrThrow(total: number, coins: number[]): number[] {
+export function _getChangeInt(total: number, coins: number[]): number[] | -1 {
 
-    const { success, change } = getChange(total, coins);
-
-    if (success) {
-        return change;
+    if (isNotInteger(total) || total < 0) {
+        throw new Error(`"total" should be a positive integer. Got ${typeof total}: ${total}`);
     }
 
-    throw new Error('Unable to get change.');
+    // Stores change for every amount from 1 to total.
+    const cache: (number[] | null)[] = new Array(total + 1).fill(null);
+
+    cache[0] = [];
+
+    // Compute change for all values from 1 to total
+    for (let i = 1; i <= total; i++) {
+
+        // Go through all coins smaller than i
+        for (let j = 0; j < coins.length; j++) {
+
+            const coin = coins[j];
+
+            if (coin <= i) {
+
+                const subRes = cache[i - coin];
+
+                if (subRes === null) {
+                    continue;
+                }
+
+                const candidate = [...subRes, coin];
+
+                if (cache[i] === null || candidate.length < cache[i].length) {
+                    cache[i] = candidate;
+                }
+            }
+        }
+    }
+
+    if (cache[total] === null) {
+        return -1;
+    }
+
+    return cache[total];
 }
+
